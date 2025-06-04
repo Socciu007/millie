@@ -1,21 +1,10 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# This workflow will install Deno then run `deno lint` and `deno test`.
-# For more information see: https://github.com/denoland/setup-deno
-
-name: Deno
+name: Deploy Vite Project
 
 on:
   push:
     branches: ["master"]
   pull_request:
     branches: ["master"]
-
-permissions:
-  contents: read
 
 jobs:
   build:
@@ -25,17 +14,19 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
 
-      - name: Install Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          deno-version: v2.x
+          node-version: '20'
 
-      - name: Build step
-        run: "deno task build"
+      - name: Install dependencies
+        run: npm install
 
-      - name: Upload to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: ""
-          entrypoint: "main.ts"
-          root: "."
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Preview (Optional)
+        run: npm run preview
